@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>Parking System</title>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+<style>
+body{
+ font-family:Arial;
+ padding:30px;
+}
+h2{ text-align:center; margin-bottom:20px; }
+button{ padding:8px 16px; margin:5px; }
+
+.green{ background:#d9f2d9; }
+.red{ background:#f2d9d9; }
+
+.button{ text-align:center; margin-bottom:25px; }
+
+.form{
+ text-align:center;
+ margin-bottom:40px;
+ display:none;
+}
+
+.main{
+ display:flex;
+ justify-content:center;
+ gap:80px;
+ margin-bottom:80px;
+}
+
+.box{
+ width:360px;
+ border:2px solid black;
+ padding:20px;
+}
+
+.slot{
+ height:55px;
+ border:2px solid green;
+ margin:12px 0;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+
+.fill{ background:#d9f2d9; }
+
+.msg{
+ margin-top:12px;
+ color:red;
+ font-weight:bold;
+}
+
+.sum{
+ display:none;
+ margin:40px auto 0;
+ padding:30px;
+ border:2px solid black;
+ width:650px;
+ border-radius:8px;
+}
+
+.title{ text-align:center; margin-bottom:15px; }
+
+.row{
+ display:flex;
+ border-bottom:1px solid #ccc;
+}
+
+.cell{
+ flex:1;
+ padding:10px;
+ text-align:center;
+ border-right:1px solid #ccc;
+}
+
+.head{
+ background:#f0f0f0;
+ font-weight:bold;
+}
+
+.login{
+ text-align:center;
+ margin-top:60px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Parking Management System</h2>
+
+<div class="login" id="loginBox">
+  <h3>Login</h3>
+  Username :
+  <input type="text" id="loginUser"><br><br>
+  Password :
+  <input type="password" id="loginPass"><br><br>
+  <button id="loginBtn">Login</button>
+  <div class="msg" id="loginMsg"></div>
+</div>
+
+<div id="parkingApp" style="display:none;">
+
+<div class="button">
+  <button class="green">Entry 4W</button>
+  <button class="red">Entry 2W</button>
+  <button id="summaryBtn">Parking Summary</button>
+  <button id="logoutBtn">Logout</button>
+</div>
+
+<div class="form" id="form">
+  Name :
+  <input type="text" id="name">
+  Vehicle :
+  <input type="text" id="vehicle">
+  <button id="saveBtn">Submit</button>
+  <div class="msg" id="msg"></div>
+</div>
+
+<div class="main">
+ <div class="box">
+   <h3>4 Wheeler Parking</h3>
+   <div class="slot" id="f1"></div>
+   <div class="slot" id="f2"></div>
+   <div class="slot" id="f3"></div>
+ </div>
+
+ <div class="box">
+   <h3>2 Wheeler Parking</h3>
+   <div class="slot" id="t1"></div>
+   <div class="slot" id="t2"></div>
+   <div class="slot" id="t3"></div>
+ </div>
+</div>
+
+<div class="sum" id="sum">
+ <h3 class="title">Parking Summary</h3>
+
+ <div class="row head">
+   <div class="cell">Name</div>
+   <div class="cell">Vehicle</div>
+   <div class="cell">Type</div>
+ </div>
+
+ <div id="data"></div>
+</div>
+
+</div>
+
+<script>
+class ParkingSystem {
+
+  constructor(){
+    this.type = "";
+    this.fCount = 0;
+    this.tCount = 0;
+  }
+
+  four(){
+    this.type = "4W";
+    $("#msg").html("");
+    $("#sum").hide();
+    $("#form").show();
+  }
+
+  two(){
+    this.type = "2W";
+    $("#msg").html("");
+    $("#sum").hide();
+    $("#form").show();
+  }
+
+  save(){
+    var name = $("#name").val();
+    var vehicle = $("#vehicle").val();
+
+    if(name == "" || vehicle == ""){
+      $("#msg").html("Enter name and vehicle");
+      return;
+    }
+
+    if(this.type == ""){
+      $("#msg").html("Select entry type");
+      return;
+    }
+
+    var text = name + "<br>" + vehicle;
+
+    if(this.type == "4W"){
+      if(this.fCount < 3){
+        this.fCount++;
+        $("#f" + this.fCount).html(text).addClass("fill");
+      } else {
+        $("#msg").html("4 Wheeler Full");
+        return;
+      }
+    }
+
+    if(this.type == "2W"){
+      if(this.tCount < 3){
+        this.tCount++;
+        $("#t" + this.tCount).html(text).addClass("fill");
+      } else {
+        $("#msg").html("2 Wheeler Full");
+        return;
+      }
+    }
+
+    var row =
+      '<div class="row">' +
+      '<div class="cell">'+name+'</div>' +
+      '<div class="cell">'+vehicle+'</div>' +
+      '<div class="cell">'+this.type+'</div>' +
+      '</div>';
+
+    $("#data").append(row);
+
+    $("#name").val("");
+    $("#vehicle").val("");
+    $("#msg").html("");
+  }
+
+  showSummary(){
+    $("#sum").show();
+    $("#form").hide();
+  }
+
+  login(){
+    var u = $("#loginUser").val();
+    var p = $("#loginPass").val();
+
+    if(u == "" || p == ""){
+      $("#loginMsg").html("Enter username and password");
+      return;
+    }
+
+    $("#loginBox").hide();
+    $("#parkingApp").show();
+    $("#form").hide();
+    $("#sum").hide();
+  }
+
+  logout(){
+    $("#parkingApp").hide();
+    $("#loginBox").show();
+
+    $("#loginUser").val("");
+    $("#loginPass").val("");
+
+    $(".slot").html("").removeClass("fill");
+    $("#data").html("");
+
+    this.fCount = 0;
+    this.tCount = 0;
+    this.type = "";
+
+    $("#form").hide();
+    $("#sum").hide();
+  }
+}
+
+var parking = new ParkingSystem();
+
+$(".green").click(function(){ 
+parking.four(); 
+});
+$(".red").click(function(){ 
+parking.two(); 
+});
+$("#saveBtn").click(function(){ 
+parking.save();
+ });
+$("#summaryBtn").click(function(){
+ parking.showSummary();
+ });
+$("#loginBtn").click(function(){ 
+parking.login();
+ });
+$("#logoutBtn").click(function(){ 
+parking.logout();
+ });
+</script>
+
+
+</body>
+</html>

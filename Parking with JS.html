@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Parking System</title>
+
+<style>
+body{
+ font-family:Arial;
+ padding:30px;
+}
+
+h2{
+ text-align:center;
+ margin-bottom:20px;
+}
+
+button{
+ padding:8px 16px;
+ margin:5px;
+}
+
+.green{ background:#d9f2d9; }
+.red{ background:#f2d9d9; }
+
+.button{
+ text-align:center;
+ margin-bottom:25px;
+}
+
+.form{
+ text-align:center;
+ margin-bottom:40px;
+ display:none;
+}
+
+.main{
+ display:flex;
+ justify-content:center;
+ gap:80px;
+ margin-bottom:80px;
+}
+
+.box{
+ width:360px;
+ border:2px solid black;
+ padding:20px;
+}
+
+.slot{
+ height:55px;
+ border:2px solid green;
+ margin:12px 0;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+
+.fill{
+ background:#d9f2d9;
+}
+
+.msg{
+ margin-top:12px;
+ color:red;
+ font-weight:bold;
+}
+
+.sum{
+ display:none;
+ margin:40px auto 0;
+ padding:30px;
+ border:2px solid black;
+ width:650px;
+ border-radius:8px;
+}
+
+.title{
+ text-align:center;
+ margin-bottom:15px;
+}
+
+.row{
+ display:flex;
+ border-bottom:1px solid #ccc;
+}
+
+.cell{
+ flex:1;
+ padding:10px;
+ text-align:center;
+ border-right:1px solid #ccc;
+}
+
+.head{
+ background:#f0f0f0;
+ font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Parking Management System</h2>
+
+<div class="button">
+  <button class="green" onclick="four()">Entry 4W</button>
+  <button class="red" onclick="two()">Entry 2W</button>
+  <button onclick="show()">Parking Summary</button>
+</div>
+
+<div class="form" id="form">
+  Name :
+  <input type="text" id="name">
+  Vehicle :
+  <input type="text" id="vehicle">
+  <button onclick="save()">Submit</button>
+  <div class="msg" id="msg"></div>
+</div>
+
+<div class="main">
+ <div class="box">
+   <h3>4 Wheeler Parking</h3>
+   <div class="slot" id="f1"></div>
+   <div class="slot" id="f2"></div>
+   <div class="slot" id="f3"></div>
+ </div>
+
+ <div class="box">
+   <h3>2 Wheeler Parking</h3>
+   <div class="slot" id="t1"></div>
+   <div class="slot" id="t2"></div>
+   <div class="slot" id="t3"></div>
+ </div>
+</div>
+
+<div class="sum" id="sum">
+ <h3 class="title">Parking Summary</h3>
+
+ <div class="row head">
+   <div class="cell">Name</div>
+   <div class="cell">Vehicle</div>
+   <div class="cell">Type</div>
+ </div>
+
+ <div id="data"></div>
+</div>
+
+<script>
+
+var type = "";
+var fCount = 0;
+var tCount = 0;
+
+function four(){
+  type = "4W";
+  document.getElementById("msg").innerHTML = "";
+  document.getElementById("sum").style.display = "none";
+  document.getElementById("form").style.display = "block";
+}
+
+function two(){
+  type = "2W";
+  document.getElementById("msg").innerHTML = "";
+  document.getElementById("sum").style.display = "none";
+  document.getElementById("form").style.display = "block";
+}
+
+function save(){
+  var name = document.getElementById("name").value;
+  var vehicle = document.getElementById("vehicle").value;
+  var msg = document.getElementById("msg");
+
+  if(name == "" || vehicle == ""){
+    msg.innerHTML = "Enter name and vehicle";
+    return;
+  }
+
+  if(type == ""){
+    msg.innerHTML = "Select entry type";
+    return;
+  }
+
+  var text = name + "<br>" + vehicle;
+
+  if(type == "4W"){
+    if(fCount < 3){
+      fCount++;
+      var box = document.getElementById("f" + fCount);
+      box.innerHTML = text;
+      box.classList.add("fill");
+    } else {
+      msg.innerHTML = "4 Wheeler Full";
+      return;
+    }
+  }
+
+  if(type == "2W"){
+    if(tCount < 3){
+      tCount++;
+      var box2 = document.getElementById("t" + tCount);
+      box2.innerHTML = text;
+      box2.classList.add("fill");
+    } else {
+      msg.innerHTML = "2 Wheeler Full";
+      return;
+    }
+  }
+
+  addRow(name, vehicle, type);
+
+  document.getElementById("name").value = "";
+  document.getElementById("vehicle").value = "";
+  msg.innerHTML = "";
+}
+
+function addRow(name, vehicle, type){
+  var data = document.getElementById("data");
+
+  var row = document.createElement("div");
+  row.className = "row";
+
+  var c1 = document.createElement("div");
+  c1.className = "cell";
+  c1.innerHTML = name;
+
+  var c2 = document.createElement("div");
+  c2.className = "cell";
+  c2.innerHTML = vehicle;
+
+  var c3 = document.createElement("div");
+  c3.className = "cell";
+  c3.innerHTML = type;
+
+  row.appendChild(c1);
+  row.appendChild(c2);
+  row.appendChild(c3);
+
+  data.appendChild(row);
+}
+
+function show(){
+  document.getElementById("sum").style.display = "block";
+}
+
+</script>
+
+</body>
+</html>
